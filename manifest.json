@@ -1,0 +1,17 @@
+{
+  "name": "LeetCode Repo Manager",
+  "description": "Manages LeetCode exercises on GitHub",
+  "version": "1.0",
+  "manifest_version": 2,
+  "permissions": [
+    "https://unpkg.com/vue@next",
+    "*://*.leetcode.com/*",
+    "webRequest",
+    "storage"
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval' https://unpkg.com; object-src 'self'",
+  "browser_action": {
+    "default_title": "LeetCode Repo Manager",
+    "default_popup": "popup.html"
+  }
+}

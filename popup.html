@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://unpkg.com/vue@next"></script>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <div id="app">
+      <div v-if="loaded">
+        <div v-if="needLogin">
+          <div v-if="userCode">
+            <label>{{ userCode }}</label>
+            <button @click="verify">Verify</button>
+            <button @click="showCode">Refresh</button>
+          </div>
+          <button v-else @click="showCode">Login</button>
+        </div>
+        <div v-else>
+          <button @click="listRepos">List Repos</button>
+          <button @click="logout">Logout</button>
+        </div>
+      </div>
+      <div v-else>
+        Loading
+      </div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>
