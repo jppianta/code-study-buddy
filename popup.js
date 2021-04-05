@@ -1,8 +1,8 @@
-function getUserCode() {
+function getStorage(var_name) {
   return new Promise((res, rej) => {
-    chrome.storage.sync.get(['user_code'], function (result) {
+    chrome.storage.sync.get([var_name], function (result) {
       if (result) {
-        res(result.user_code);
+        res(result[var_name]);
       } else {
         rej();
       }
@@ -10,40 +10,10 @@ function getUserCode() {
   })
 }
 
-function setUserCode(user_code) {
-  chrome.storage.sync.set({ user_code });
-}
-
-function getDeviceCode() {
-  return new Promise((res, rej) => {
-    chrome.storage.sync.get(['device_code'], function (result) {
-      if (result) {
-        res(result.device_code);
-      } else {
-        rej();
-      }
-    });
-  })
-}
-
-function setDeviceCode(device_code) {
-  chrome.storage.sync.set({ device_code });
-}
-
-function getToken() {
-  return new Promise((res, rej) => {
-    chrome.storage.sync.get(['access_token'], function (result) {
-      if (result) {
-        res(result.access_token);
-      } else {
-        rej();
-      }
-    });
-  })
-}
-
-function setToken(access_token) {
-  chrome.storage.sync.set({ access_token });
+function setStorage(var_name, value) {
+  const pair = {};
+  pair[var_name] = value;
+  chrome.storage.sync.set(pair);
 }
 
 function clearStorage() {
@@ -56,9 +26,11 @@ const App = {
     return {
       loaded: false,
       needLogin: true,
+      repo: '',
       deviceCode: '',
       userCode: '',
-      token: ''
+      token: '',
+      ownerName: ''
     }
   },
   methods: {
@@ -75,8 +47,8 @@ const App = {
         .then(resp => {
           this.userCode = resp.user_code
           this.deviceCode = resp.device_code
-          setUserCode(this.userCode)
-          setDeviceCode(this.deviceCode)
+          setStorage('user_code', this.userCode)
+          setStorage('device_code', this.deviceCode)
         })
         .catch(err => console.error(err));
     },
@@ -89,19 +61,35 @@ const App = {
         .then(resp => resp.json())
         .then(resp => {
           this.token = resp.access_token;
-          setToken(this.token);
+          setStorage('access_token', this.token);
           this.needLogin = false;
         })
         .catch(err => console.error(err));
     },
-    listRepos() {
-      fetch('https://api.github.com/user/repos', {
+    async getMainSHA() {
+      if (!this.ownerName) {
+        await this.getUserInfo();
+      }
+      return fetch(`https://api.github.com/repos/${this.ownerName}/${this.repo}/branches/main`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json', 'Authorization': `token ${this.token}` }
       })
         .then(resp => resp.json())
         .then(resp => {
-          console.log(resp)
+          if (resp.commit) {
+            return resp.commit.sha;
+          }
+        })
+        .catch(err => console.error(err));
+    },
+    getUserInfo() {
+      return fetch('https://api.github.com/user', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json', 'Authorization': `token ${this.token}` }
+      })
+        .then(resp => resp.json())
+        .then(resp => {
+          this.ownerName = resp.login
         })
         .catch(err => console.error(err));
     }
@@ -110,7 +98,7 @@ const App = {
 
 const vm = Vue.createApp(App).mount('#app')
 
-getToken()
+getStorage('access_token')
   .then(token => {
     console.log(token)
     if (token) {
@@ -118,11 +106,11 @@ getToken()
       vm.token = token;
       vm.loaded = true;
     } else {
-      getUserCode()
+      getStorage('user_code')
         .then(userCode => {
           if (userCode) {
             vm.userCode = userCode;
-            getDeviceCode()
+            getStorage('device_code')
               .then(deviceCode => {
                 vm.deviceCode = deviceCode;
                 vm.loaded = true;

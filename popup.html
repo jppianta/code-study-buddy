@@ -16,7 +16,8 @@
           <button v-else @click="showCode">Login</button>
         </div>
         <div v-else>
-          <button @click="listRepos">List Repos</button>
+          <input v-model="repo" placeholder="Repository name" />
+          <button @click="getMainSHA">Info</button>
           <button @click="logout">Logout</button>
         </div>
       </div>
