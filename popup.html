@@ -16,8 +16,8 @@
           <button v-else @click="showCode">Login</button>
         </div>
         <div v-else>
-          <input v-model="repo" placeholder="Repository name" />
-          <button @click="getMainSHA">Info</button>
+          <input v-model="repo" @change="updateRepo" placeholder="Repository name" />
+          <button @click="updateExercise">Save</button>
           <button @click="logout">Logout</button>
         </div>
       </div>
@@ -25,6 +25,8 @@
         Loading
       </div>
     </div>
-    <script src="popup.js"></script>
+    <script src="githubApiHandler.js" type="module"></script>
+    <script src="leetcodeData.js" type="module"></script>
+    <script src="popup.js" type="module"></script>
   </body>
 </html>

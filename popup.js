@@ -1,3 +1,12 @@
+import {
+  getMainSHA,
+  getUserInfo,
+  updateReference,
+  createCommit,
+  createTree,
+  updateFile
+} from './githubApiHandler.js';
+
 function getStorage(var_name) {
   return new Promise((res, rej) => {
     chrome.storage.sync.get([var_name], function (result) {
@@ -41,6 +50,9 @@ const App = {
       this.token = '';
       clearStorage();
     },
+    updateRepo() {
+      setStorage('repo_name', this.repo)
+    },
     showCode() {
       fetch('https://leetcode-repo-manager.herokuapp.com/code')
         .then(resp => resp.json())
@@ -66,41 +78,33 @@ const App = {
         })
         .catch(err => console.error(err));
     },
-    async getMainSHA() {
-      if (!this.ownerName) {
-        await this.getUserInfo();
-      }
-      return fetch(`https://api.github.com/repos/${this.ownerName}/${this.repo}/branches/main`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json', 'Authorization': `token ${this.token}` }
+    updateExercise() {
+      chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, { info: true }, (response) => {
+          this.updateFile(response).then(() => {
+            console.log("Submitted")
+          })
+        });
       })
-        .then(resp => resp.json())
-        .then(resp => {
-          if (resp.commit) {
-            return resp.commit.sha;
-          }
-        })
-        .catch(err => console.error(err));
     },
-    getUserInfo() {
-      return fetch('https://api.github.com/user', {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json', 'Authorization': `token ${this.token}` }
-      })
-        .then(resp => resp.json())
-        .then(resp => {
-          this.ownerName = resp.login
-        })
-        .catch(err => console.error(err));
-    }
+    getUserInfo,
+    getMainSHA,
+    updateReference,
+    createCommit,
+    createTree,
+    updateFile
   }
 }
 
 const vm = Vue.createApp(App).mount('#app')
 
+getStorage('repo_name')
+  .then(repo => {
+    vm.repo = repo;
+  })
+
 getStorage('access_token')
   .then(token => {
-    console.log(token)
     if (token) {
       vm.needLogin = false;
       vm.token = token;
