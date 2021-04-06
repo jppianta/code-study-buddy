@@ -7,9 +7,9 @@ import {
   updateFile
 } from './githubApiHandler.js';
 
-function getStorage(var_name) {
+function getStorage(var_name, type='local') {
   return new Promise((res, rej) => {
-    chrome.storage.sync.get([var_name], function (result) {
+    chrome.storage[type].get([var_name], function (result) {
       if (result) {
         res(result[var_name]);
       } else {
@@ -19,10 +19,10 @@ function getStorage(var_name) {
   })
 }
 
-function setStorage(var_name, value) {
+function setStorage(var_name, value, type='local') {
   const pair = {};
   pair[var_name] = value;
-  chrome.storage.sync.set(pair);
+  chrome.storage[type].set(pair);
 }
 
 function clearStorage() {
@@ -51,7 +51,7 @@ const App = {
       clearStorage();
     },
     updateRepo() {
-      setStorage('repo_name', this.repo)
+      setStorage('repo_name', this.repo, 'sync')
     },
     showCode() {
       fetch('https://leetcode-repo-manager.herokuapp.com/code')
@@ -73,7 +73,7 @@ const App = {
         .then(resp => resp.json())
         .then(resp => {
           this.token = resp.access_token;
-          setStorage('access_token', this.token);
+          setStorage('access_token', this.token, 'sync');
           this.needLogin = false;
         })
         .catch(err => console.error(err));
@@ -98,12 +98,12 @@ const App = {
 
 const vm = Vue.createApp(App).mount('#app')
 
-getStorage('repo_name')
+getStorage('repo_name', 'sync')
   .then(repo => {
     vm.repo = repo;
   })
 
-getStorage('access_token')
+getStorage('access_token', 'sync')
   .then(token => {
     if (token) {
       vm.needLogin = false;

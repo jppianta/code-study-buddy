@@ -16,9 +16,14 @@
           <button v-else @click="showCode">Login</button>
         </div>
         <div v-else>
-          <input v-model="repo" @change="updateRepo" placeholder="Repository name" />
-          <button @click="updateExercise">Save</button>
-          <button @click="logout">Logout</button>
+          <div class="logo-container flex-center mb">
+            <img src="./images/logo.png" class='logo' />
+          </div>
+          <input class="mb" v-model="repo" @change="updateRepo" placeholder="Repository name" />
+          <div class="mb flex-center">
+            <button @click="updateExercise">Save</button>
+            <button @click="logout">Logout</button>
+          </div>
         </div>
       </div>
       <div v-else>
