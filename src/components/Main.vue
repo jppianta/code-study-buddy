@@ -1,0 +1,147 @@
+<template>
+  <div class="tile flex block line-bottom">
+    <img class="avatar" :src="personal.avatar" />
+    <h2>{{ personal.name }}</h2>
+    <button @click="logout" class="logout flex flex-center">
+      <img src="../assets/logout.svg" />
+    </button>
+  </div>
+  <Repo v-if="!shared.repo" />
+  <div v-else>
+    <div class="block line-bottom flex flex-center repo-info">
+      <div class="flex1">
+        <h2 class="bold">Repo:</h2>
+        <h2>{{ shared.repo }}</h2>
+      </div>
+      <button @click="changeRepo" class="logout flex flex-center">
+        <img src="../assets/logout.svg" />
+      </button>
+    </div>
+    <div class="block flex-column" v-if="personal.details">
+      <div class="question-info mb-12">
+        <h2>
+          {{ personal.details.questionInfo.questionNumber }}.
+          {{ personal.details.questionInfo.questionTitle }}
+        </h2>
+      </div>
+      <div class="flex flex-center question-actions">
+        <h2 :class="['flex1', personal.details.questionInfo.difficulty]">
+          {{ personal.details.questionInfo.difficulty }}
+        </h2>
+        <button @click="save">Save</button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { data, getDetails, loadingTask, setStorageValue } from "../data.js";
+import { githubApiHandler } from "../githubApiHandler.js";
+import Repo from "./Repo.vue";
+
+export default {
+  name: "App",
+  components: {
+    Repo,
+  },
+  data() {
+    return {
+      personal: {
+        details: null,
+        name: "",
+        avatar: "",
+      },
+      shared: data.state,
+    };
+  },
+  methods: {
+    logout() {
+      data.logout();
+    },
+    changeRepo() {
+      data.setRepo("");
+      setStorageValue("repo_name", "", "sync");
+    },
+    save() {
+      // eslint-disable-next-line no-undef
+      chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
+        // eslint-disable-next-line no-undef
+        chrome.tabs.sendMessage(tabs[0].id, { info: true }, (details) => {
+          loadingTask(
+            githubApiHandler.updateFile(details).then(() => {
+              data.setInfo({ message: "Solution saved!", type: "success" });
+            })
+          );
+        });
+      });
+    },
+  },
+  mounted() {
+    loadingTask(
+      getDetails()
+        .then((details) => (this.personal.details = details))
+        .catch(() => console.log("Tab not on Leetcode"))
+    ).then(() => {
+      loadingTask(
+        githubApiHandler.verifyInfo().then(() => {
+          this.personal.name = githubApiHandler.ownerName;
+          this.personal.avatar = githubApiHandler.avatarUrl;
+        })
+      );
+    });
+  },
+};
+</script>
+
+<style>
+.tile {
+  height: 24px;
+  align-items: center;
+}
+
+.tile > h2 {
+  flex: 1;
+  font-size: 16px;
+}
+
+.question-info > h2 {
+  font-size: 18px;
+}
+
+.question-actions > h2 {
+  font-size: 14px;
+}
+
+.avatar {
+  height: 100%;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.logout > img {
+  height: 20px;
+}
+
+.logout {
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+}
+
+.repo-info h2 {
+  font-size: 14px;
+  display: contents;
+}
+
+.Easy {
+  color: #0b6a0b;
+}
+
+.Medium {
+  color: #ffaa44;
+}
+
+.Hard {
+  color: #d13438;
+}
+</style>

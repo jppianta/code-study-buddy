@@ -34,10 +34,10 @@ function getLeetCodeDetails() {
   return { questionInfo: getQuestionInfo(), language: getLanguage(), code: getCode() }
 }
 
+// eslint-disable-next-line no-undef
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.info) {
     const details = getLeetCodeDetails()
-    console.log("test", details)
     sendResponse(details)
   }
 });
