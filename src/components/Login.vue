@@ -66,6 +66,8 @@ export default {
   mounted() {
     if (!this.shared.userCode) {
       this.getCode();
+    } else {
+      this.verify();
     }
   },
 };

@@ -14,6 +14,13 @@ function getCode() {
   return linesContent.join('\n');
 }
 
+function getDescription() {
+  return document.querySelector('[data-key="description-content"]')
+    .firstElementChild.children[1]
+    .firstElementChild
+    .innerHTML;
+}
+
 function getLanguage() {
   const codeArea = document.querySelector('[data-cy="code-area"]');
 
@@ -27,7 +34,7 @@ function getQuestionInfo() {
 
   const difficulty = document.querySelector('[diff]').innerText
 
-  return { questionNumber: titleSplit[0], questionTitle: titleSplit[1], difficulty }
+  return { questionNumber: titleSplit[0], questionTitle: titleSplit[1], difficulty, description: getDescription() }
 }
 
 function getLeetCodeDetails() {

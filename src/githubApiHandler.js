@@ -77,7 +77,13 @@ class GithubApiHandler {
               type: 'blob',
               mode: '100644',
               content: details.code,
-              path: `${details.language}/${details.questionInfo.difficulty}/${details.questionInfo.questionTitle}${this.getExtension(details.language)}`
+              path: `Leetcode/${details.questionInfo.difficulty}/${details.questionInfo.questionTitle}/${details.language} Solution${this.getExtension(details.language)}`
+            },
+            {
+              type: 'blob',
+              mode: '100644',
+              content: details.questionInfo.description,
+              path: `Leetcode/${details.questionInfo.difficulty}/${details.questionInfo.questionTitle}/README.md`
             }
           ],
           base_tree: baseCommitSHA
