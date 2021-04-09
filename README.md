@@ -1,3 +1,7 @@
-# Code Study Budy
+![logo](https://github.com/jppianta/code-study-buddy/blob/main/logo128.png)
 
 Automatically sync your LeetCode solution in a GitHub repository to better organize your studies
+
+| Browser | Version | Link |
+| ------- | ------- | ---- |
+| Firefox | 1.0.5   | [Download](https://addons.mozilla.org/en-US/firefox/addon/code-study-buddy/) |
