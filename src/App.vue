@@ -17,7 +17,6 @@ import Info from "./components/Info.vue";
 import {
   data,
   loadingTask,
-  getStorageValue,
   initializeVariables,
 } from "./data.js";
 
@@ -39,12 +38,6 @@ export default {
     Info,
   },
   mounted() {
-    getStorageValue("repo_name", "sync").then((repo) => {
-      data.setRepo(repo)
-    });
-    getStorageValue("branches", "sync").then((branches) => {
-      data.setBranches(branches)
-    });
     loadingTask(
       initializeVariables()
     ).then(() => {

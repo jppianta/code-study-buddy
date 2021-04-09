@@ -20,13 +20,14 @@
       </div>
       <h2 class="bold">Branch:</h2>
       <select
-        v-model="personal.selectedBranch"
-        name="branch"
+        :value="personal.selectedBranch"
+        @input="changeBranch"
       >
         <option
           v-for="branch in shared.branches"
           :value="branch"
           v-bind:key="branch"
+          :selected="branch === personal.selectedBranch"
         >
           {{ branch }}
         </option>
@@ -80,12 +81,11 @@ export default {
     logout() {
       data.logout();
     },
-    onSelectBranch() {
+    changeBranch(e) {
+      const value = e.target.value;
+      this.personal.selectedBranch = value
       setStorageValue("selected_branch", this.personal.selectedBranch);
       githubApiHandler.branch = this.personal.selectedBranch;
-    },
-    changeBranch(branch) {
-      this.personal.selectedBranch = branch
     },
     changeRepo() {
       data.setRepo("");
@@ -109,8 +109,14 @@ export default {
     getStorageValue("selected_branch").then((branch) => {
       console.log(branch);
       if (branch) {
-        this.changeBranch(branch);
+        this.personal.selectedBranch = branch;
       }
+    });
+    getStorageValue("repo_name", "sync").then((repo) => {
+      data.setRepo(repo)
+    });
+    getStorageValue("branches", "sync").then((branches) => {
+      data.setBranches(branches)
     });
     loadingTask(
       getDetails()
