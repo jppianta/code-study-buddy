@@ -1,7 +1,7 @@
 <template>
   <Title class="block line-bottom" />
   <Loading v-if="shared.loading" />
-  <div :class="{ 'blur': shared.loading }" v-if="personal.firstLoaded">
+  <div :class="{ blur: shared.loading }" v-if="personal.firstLoaded">
     <Main class="block" v-if="shared.token" />
     <Login class="block" v-else />
   </div>
@@ -14,18 +14,14 @@ import Login from "./components/Login.vue";
 import Loading from "./components/Loading.vue";
 import Title from "./components/Title.vue";
 import Info from "./components/Info.vue";
-import {
-  data,
-  loadingTask,
-  initializeVariables,
-} from "./data.js";
+import { data, loadingTask, initializeVariables } from "./data.js";
 
 export default {
   name: "App",
   data() {
     return {
       personal: {
-        firstLoaded: false
+        firstLoaded: false,
       },
       shared: data.state,
     };
@@ -38,11 +34,9 @@ export default {
     Info,
   },
   mounted() {
-    loadingTask(
-      initializeVariables()
-    ).then(() => {
+    loadingTask(initializeVariables()).then(() => {
       this.personal.firstLoaded = true;
-    })
+    });
   },
 };
 </script>
@@ -92,7 +86,8 @@ select {
   padding: 4px;
 }
 
-button, select {
+button,
+select {
   border: 1px solid #d0dfea;
   border-radius: 3px;
   color: #004e8c;
@@ -110,7 +105,8 @@ button:hover {
   cursor: pointer;
 }
 
-button:active, select:active {
+button:active,
+select:active {
   box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3),
     0 3px 6px 2px rgba(60, 64, 67, 0.15);
 }

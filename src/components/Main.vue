@@ -19,10 +19,7 @@
         </button>
       </div>
       <h2 class="bold">Branch:</h2>
-      <select
-        :value="personal.selectedBranch"
-        @input="changeBranch"
-      >
+      <select :value="personal.selectedBranch" @input="changeBranch">
         <option
           v-for="branch in shared.branches"
           :value="branch"
@@ -83,11 +80,12 @@ export default {
     },
     changeBranch(e) {
       const value = e.target.value;
-      this.personal.selectedBranch = value
+      this.personal.selectedBranch = value;
       setStorageValue("selected_branch", this.personal.selectedBranch);
       githubApiHandler.branch = this.personal.selectedBranch;
     },
     changeRepo() {
+      data.clearInfo();
       data.setRepo("");
       setStorageValue("repo_name", "", "sync");
     },
@@ -97,9 +95,18 @@ export default {
         // eslint-disable-next-line no-undef
         chrome.tabs.sendMessage(tabs[0].id, { info: true }, (details) => {
           loadingTask(
-            githubApiHandler.updateFile(details).then(() => {
-              data.setInfo({ message: "Solution saved!", type: "success" });
-            })
+            githubApiHandler
+              .updateFile(details)
+              .then(() => {
+                data.setInfo({ message: "Solution saved!", type: "success" });
+              })
+              .catch(() => {
+                data.setInfo({
+                  type: "error",
+                  message:
+                    "Fail to upload the solution to GitHub. Should be a network issue. Please, try again later.",
+                });
+              })
           );
         });
       });
@@ -113,10 +120,10 @@ export default {
       }
     });
     getStorageValue("repo_name", "sync").then((repo) => {
-      data.setRepo(repo)
+      data.setRepo(repo);
     });
     getStorageValue("branches", "sync").then((branches) => {
-      data.setBranches(branches)
+      data.setBranches(branches);
     });
     loadingTask(
       getDetails()

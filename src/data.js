@@ -33,6 +33,7 @@ export function clearCodes() {
 
 export async function loadingTask(promise) {
   data.setLoading(true);
+  data.clearInfo();
   await promise
     .then(() => data.setLoading(false))
     .catch(err => {
@@ -80,6 +81,7 @@ export const data = {
   }),
 
   logout() {
+    this.clearInfo();
     this.setToken('')
     this.setUserCode('')
     this.setDeviceCode('')

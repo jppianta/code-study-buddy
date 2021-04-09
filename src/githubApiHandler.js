@@ -23,6 +23,9 @@ class GithubApiHandler {
       headers: this.getHeaders()
     })
       .then(resp => resp.json())
+      .catch(() => {
+        data.setInfo({ type: 'error', message: 'Fail to get user info. Should be a network issue. Please, try again later.' })
+      })
 
     this.avatarUrl = resp.avatar_url
     this.ownerName = resp.login
@@ -62,6 +65,9 @@ class GithubApiHandler {
         data.setBranches(branches)
         setStorageValue('branches', branches, 'sync')
         this.branch = branches[0];
+      })
+      .catch(() => {
+        data.setInfo({ type: 'error', message: 'Fail to get branches. Should be a network issue. Please, try again later.' })
       })
   }
 

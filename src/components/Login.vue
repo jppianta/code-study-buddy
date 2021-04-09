@@ -41,6 +41,13 @@ export default {
             setStorageValue("user_code", userCode);
             setStorageValue("device_code", deviceCode);
           })
+          .catch(() => {
+            data.setInfo({
+              message:
+                "Failed to get a code. Should be a network issue. Please, try again later.",
+              type: "error",
+            });
+          })
       );
     },
     verify() {

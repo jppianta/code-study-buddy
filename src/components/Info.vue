@@ -5,15 +5,15 @@
 </template>
 
 <script>
-import { data } from '../data'
+import { data } from "../data";
 export default {
-  name: 'Info',
+  name: "Info",
   data() {
     return {
-      shared: data.state
-    }
-  }
-}
+      shared: data.state,
+    };
+  },
+};
 </script>
 
 <style>
