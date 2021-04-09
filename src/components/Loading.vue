@@ -19,6 +19,5 @@ export default {
   height: calc(100% - 60px);
   left: 0;
   top: 60px;
-  backdrop-filter: blur(10px);
 }
 </style>

@@ -74,6 +74,7 @@ export const data = {
     userCode: '',
     deviceCode: '',
     repo: '',
+    branches: [],
     info: null,
     loading: true
   }),
@@ -112,5 +113,9 @@ export const data = {
 
   setLoading(value) {
     this.state.loading = value;
+  },
+
+  setBranches(value) {
+    this.state.branches = value;
   }
 }

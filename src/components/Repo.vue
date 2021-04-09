@@ -31,6 +31,7 @@ export default {
               if (resp.status === 'Valid') {
                 data.setRepo(this.personal.repo);
                 setStorageValue('repo_name', this.personal.repo, 'sync')
+                githubApiHandler.loadBranches()
                 data.clearInfo();
               } else {
                 data.setInfo({ message: resp.status, type: 'error' })

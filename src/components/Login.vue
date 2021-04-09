@@ -19,11 +19,7 @@
 </template>
 
 <script>
-import {
-  data,
-  setStorageValue,
-  loadingTask,
-} from "../data.js";
+import { data, setStorageValue, loadingTask } from "../data.js";
 
 export default {
   name: "Login",
@@ -74,8 +70,9 @@ export default {
 </script>
 <style>
 .user-code > h2 {
-  font-weight: 500;
+  font-weight: 600;
   margin-bottom: 8px;
+  font-size: 18px;
 }
 
 .code {

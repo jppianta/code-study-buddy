@@ -1,7 +1,7 @@
 <template>
   <Title class="block line-bottom" />
   <Loading v-if="shared.loading" />
-  <div v-if="personal.firstLoaded">
+  <div :class="{ 'blur': shared.loading }" v-if="personal.firstLoaded">
     <Main class="block" v-if="shared.token" />
     <Login class="block" v-else />
   </div>
@@ -42,6 +42,9 @@ export default {
     getStorageValue("repo_name", "sync").then((repo) => {
       data.setRepo(repo)
     });
+    getStorageValue("branches", "sync").then((branches) => {
+      data.setBranches(branches)
+    });
     loadingTask(
       initializeVariables()
     ).then(() => {
@@ -60,6 +63,10 @@ body {
   width: 225px;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial,
     sans-serif, Apple Color Emoji, Segoe UI emoji;
+}
+
+.blur {
+  filter: blur(5px);
 }
 
 .flex1 {
@@ -85,10 +92,14 @@ h2 {
 }
 
 .bold {
-  font-weight: 500;
+  font-weight: 600;
 }
 
-button {
+select {
+  padding: 4px;
+}
+
+button, select {
   border: 1px solid #d0dfea;
   border-radius: 3px;
   color: #004e8c;
@@ -97,12 +108,16 @@ button {
   padding: 4px 8px;
 }
 
+select:hover {
+  background: #f4faff;
+}
+
 button:hover {
   background: #f4faff;
   cursor: pointer;
 }
 
-button:active {
+button:active, select:active {
   box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3),
     0 3px 6px 2px rgba(60, 64, 67, 0.15);
 }

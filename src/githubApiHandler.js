@@ -1,4 +1,4 @@
-import { data } from './data';
+import { data, setStorageValue } from './data';
 
 class GithubApiHandler {
   getHeaders() {
@@ -42,10 +42,26 @@ class GithubApiHandler {
       headers: this.getHeaders()
     })
       .then(resp => {
-        switch(resp.status) {
+        switch (resp.status) {
           case 200: return { status: 'Valid' };
           case 404: return { status: 'Repo does not exist. No need for the entire url, just your Github repository name.' }
         }
+      })
+  }
+
+  async loadBranches() {
+    await this.verifyInfo();
+
+    return fetch(`https://api.github.com/repos/${this.ownerName}/${data.state.repo}/branches`, {
+      method: 'GET',
+      headers: this.getHeaders()
+    })
+      .then(resp => resp.json())
+      .then(resp => {
+        const branches = resp.map(branch => branch.name)
+        data.setBranches(branches)
+        setStorageValue('branches', branches, 'sync')
+        this.branch = branches[0];
       })
   }
 

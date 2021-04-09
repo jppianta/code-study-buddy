@@ -8,14 +8,29 @@
   </div>
   <Repo v-if="!shared.repo" />
   <div v-else>
-    <div class="block line-bottom flex flex-center repo-info">
-      <div class="flex1">
-        <h2 class="bold">Repo:</h2>
-        <h2>{{ shared.repo }}</h2>
+    <div class="block line-bottom flex-column repo-info flex1">
+      <div class="flex flex-center mb-12">
+        <div class="flex1">
+          <h2 class="bold">Repo:</h2>
+          <h2>{{ shared.repo }}</h2>
+        </div>
+        <button @click="changeRepo" class="logout flex flex-center">
+          <img src="../assets/logout.svg" />
+        </button>
       </div>
-      <button @click="changeRepo" class="logout flex flex-center">
-        <img src="../assets/logout.svg" />
-      </button>
+      <h2 class="bold">Branch:</h2>
+      <select
+        v-model="personal.selectedBranch"
+        name="branch"
+      >
+        <option
+          v-for="branch in shared.branches"
+          :value="branch"
+          v-bind:key="branch"
+        >
+          {{ branch }}
+        </option>
+      </select>
     </div>
     <div class="block flex-column" v-if="personal.details">
       <div class="question-info mb-12">
@@ -35,7 +50,13 @@
 </template>
 
 <script>
-import { data, getDetails, loadingTask, setStorageValue } from "../data.js";
+import {
+  data,
+  getDetails,
+  getStorageValue,
+  loadingTask,
+  setStorageValue,
+} from "../data.js";
 import { githubApiHandler } from "../githubApiHandler.js";
 import Repo from "./Repo.vue";
 
@@ -50,6 +71,7 @@ export default {
         details: null,
         name: "",
         avatar: "",
+        selectedBranch: "",
       },
       shared: data.state,
     };
@@ -57,6 +79,13 @@ export default {
   methods: {
     logout() {
       data.logout();
+    },
+    onSelectBranch() {
+      setStorageValue("selected_branch", this.personal.selectedBranch);
+      githubApiHandler.branch = this.personal.selectedBranch;
+    },
+    changeBranch(branch) {
+      this.personal.selectedBranch = branch
     },
     changeRepo() {
       data.setRepo("");
@@ -77,6 +106,12 @@ export default {
     },
   },
   mounted() {
+    getStorageValue("selected_branch").then((branch) => {
+      console.log(branch);
+      if (branch) {
+        this.changeBranch(branch);
+      }
+    });
     loadingTask(
       getDetails()
         .then((details) => (this.personal.details = details))
@@ -128,9 +163,12 @@ export default {
   border-radius: 50%;
 }
 
+.repo-info {
+  justify-content: center;
+}
+
 .repo-info h2 {
   font-size: 14px;
-  display: contents;
 }
 
 .Easy {
