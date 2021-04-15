@@ -86,8 +86,24 @@ class GithubApiHandler {
       })
   }
 
+  createBlob(content, path) {
+    return {
+      type: 'blob',
+      mode: '100644',
+      content,
+      path
+    }
+  }
+
   async createTree(baseCommitSHA, details) {
     await this.verifyInfo();
+
+    const assets = details.questionInfo.assets ?
+      details.questionInfo.assets
+        .map(asset => this.createBlob(asset.content, `${details.platform}/${details.questionInfo.difficulty}/${details.questionInfo.questionTitle}/assets/${asset.name}`)) :
+      []
+
+    console.log(assets)
 
     return fetch(`https://api.github.com/repos/${this.ownerName}/${data.state.repo}/git/trees`, {
       method: 'POST',
@@ -95,19 +111,9 @@ class GithubApiHandler {
       body: JSON.stringify(
         {
           tree: [
-            {
-              type: 'blob',
-              mode: '100644',
-              content: details.code,
-              path: `Leetcode/${details.questionInfo.difficulty}/${details.questionInfo.questionTitle}/${details.language} Solution${this.getExtension(details.language)}`
-            },
-            {
-              type: 'blob',
-              mode: '100644',
-              content: details.questionInfo.description,
-              path: `Leetcode/${details.questionInfo.difficulty}/${details.questionInfo.questionTitle}/README.md`
-            }
-          ],
+            this.createBlob(details.code, `${details.platform}/${details.questionInfo.difficulty}/${details.questionInfo.questionTitle}/${details.language} Solution${this.getExtension(details.language)}`),
+            this.createBlob(details.questionInfo.description, `${details.platform}/${details.questionInfo.difficulty}/${details.questionInfo.questionTitle}/README.md`)
+          ].concat(assets),
           base_tree: baseCommitSHA
         }
       )

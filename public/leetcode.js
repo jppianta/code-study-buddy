@@ -14,8 +14,8 @@ function getCode() {
   return linesContent.join('\n');
 }
 
-function getDescription() {
-  return document.querySelector('[data-key="description-content"]')
+function getDescription(title) {
+  return `# ${title}\n` + document.querySelector('[data-key="description-content"]')
     .firstElementChild.children[1]
     .firstElementChild
     .innerHTML;
@@ -34,17 +34,16 @@ function getQuestionInfo() {
 
   const difficulty = document.querySelector('[diff]').innerText
 
-  return { questionNumber: titleSplit[0], questionTitle: titleSplit[1], difficulty, description: getDescription() }
+  return { questionTitle: titleSplit[1], difficulty, description: getDescription(title) }
 }
 
-function getLeetCodeDetails() {
-  return { questionInfo: getQuestionInfo(), language: getLanguage(), code: getCode() }
+function getDetails() {
+  return { questionInfo: getQuestionInfo(), language: getLanguage(), code: getCode(), platform: 'Leetcode' }
 }
 
 // eslint-disable-next-line no-undef
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.info) {
-    const details = getLeetCodeDetails()
-    sendResponse(details)
+    sendResponse(getDetails)
   }
 });

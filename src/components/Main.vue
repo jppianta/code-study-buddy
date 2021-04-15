@@ -33,7 +33,6 @@
     <div class="block flex-column" v-if="personal.details">
       <div class="question-info mb-12">
         <h2>
-          {{ personal.details.questionInfo.questionNumber }}.
           {{ personal.details.questionInfo.questionTitle }}
         </h2>
       </div>

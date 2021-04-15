@@ -1,11 +1,10 @@
 {
   "name": "Code Study Buddy",
   "description": "Manages LeetCode exercises on GitHub",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "manifest_version": 2,
   "permissions": [
     "*://*.leetcode.com/*",
-    "tabs",
     "storage"
   ],
   "browser_action": {
@@ -28,7 +27,15 @@
         "*://*.leetcode.com/problems/*"
       ],
       "js": [
-        "contentScript.js"
+        "leetcode.js"
+      ]
+    },
+    {
+      "matches": [
+        "*://*.hackerrank.com/challenges/*"
+      ],
+      "js": [
+        "hackerrank.js"
       ]
     }
   ]
