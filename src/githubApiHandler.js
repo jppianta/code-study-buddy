@@ -128,7 +128,7 @@ class GithubApiHandler {
     return fetch(`https://api.github.com/repos/${this.ownerName}/${data.state.repo}/git/commits`, {
       method: 'POST',
       headers: this.getHeaders(),
-      body: JSON.stringify({ tree: treeSha, message: `Update ${title} exercies`, parents: [baseCommitSHA] })
+      body: JSON.stringify({ tree: treeSha, message: `Update ${title} exercise`, parents: [baseCommitSHA] })
     })
       .then(resp => resp.json())
       .then(resp => resp.sha)
